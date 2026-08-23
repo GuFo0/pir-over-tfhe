@@ -1,0 +1,7 @@
+import numpy as np
+
+
+def get_ith_element_of_database(
+    one_hot_vector: np.ndarray, database: np.ndarray
+) -> tuple:
+    return tuple(np.dot(one_hot_vector, database[i]) for i in range(database.shape[0]))
