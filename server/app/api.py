@@ -66,7 +66,7 @@ def load_resources_into_memory():
         SPAM_DB = np.load(DB_PATH)
 
 
-@app.get("/api/v1/specs")
+@app.get("/api/specs")
 def get_client_specs():
     try:
         verify_and_build_resources()
@@ -109,7 +109,7 @@ async def register_keys(request: Request):
         )
 
 
-@app.post("/api/v1/query")
+@app.post("/api/query")
 async def process_query(request: Request, client_id: str = Header(...)):
     global FHE_SERVER
 
