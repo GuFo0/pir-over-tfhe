@@ -3,6 +3,8 @@ from pathlib import Path
 
 import numpy as np
 
+from server.build.build_db import generate_db
+
 BASE_DIR = Path(__file__).resolve().parent.parent
 CONFIG_PATH = BASE_DIR / "config" / "settings.json"
 DB_PATH = BASE_DIR / "data" / "spam_db.npy"
@@ -16,16 +18,9 @@ def get_ith_element_of_database(
 
 
 def get_db() -> np.ndarray:
-    """
-    Restituisce l'istanza del database attualmente caricata in memoria RAM.
-    Se non è presente, la carica automaticamente dal disco (lazy loading).
-    """
     global SPAM_DB
     if SPAM_DB is None:
         if not DB_PATH.exists():
-            # Inizializzazione automatica se il file non esiste
-            from server.build.build_db import generate_db
-
             generate_db()
         print("[UTILS] Caricamento del database dal disco alla RAM...")
         SPAM_DB = np.load(DB_PATH)
