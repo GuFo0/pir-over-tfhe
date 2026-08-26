@@ -1,5 +1,11 @@
 {
   "TOTAL_BITS": 20,
   "INPUT_BITS": 14,
-  "OUTPUT_BITS": 8
+  "OUTPUT_BITS": 8,
+
+  "show_mlir": false,
+  "show_graph": false,
+  "use_gpu": false,
+  "show_progress": false,
+  "dataflow_parallelize": true
 }

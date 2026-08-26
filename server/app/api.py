@@ -1,8 +1,8 @@
+import asyncio
 import base64
 import json
-import sys
 import uuid
-from pathlib import Path
+from concurrent.futures import ProcessPoolExecutor
 
 import numpy as np
 from concrete import fhe
@@ -10,18 +10,17 @@ from fastapi import FastAPI, Header, HTTPException, Request, Response
 from fastapi.responses import HTMLResponse
 from pydantic import BaseModel
 
-from server.app.utils import *
 from server.app.utils import (
     clear_db_memory,
     get_db,
     populate_db_from_csv,
     populate_db_randomly,
+    update_db_in_memory,
 )
 from server.build.build_db import generate_db
 from server.build.compile_circuit import compile_fhe_circuit
 from server.config.paths import (
     BASE_DIR,
-    CLIENT_SPECS_PATH,
     CONFIG_PATH,
     DB_PATH,
     SERVER_ZIP_PATH,
@@ -43,7 +42,7 @@ SPAM_DB = None
 EVALUATION_KEYS_STORE = {}
 
 
-def verify_and_build_resources():
+async def verify_and_build_resources():
     if not DB_PATH.exists():
         print("[SERVER] Database non trovato. Avvio generazione database...")
         try:
@@ -56,14 +55,17 @@ def verify_and_build_resources():
                 "Generazione del database completata, ma il file npy non è stato trovato."
             )
 
-    if not SERVER_ZIP_PATH.exists() or not CLIENT_SPECS_PATH.exists():
+    if not SERVER_ZIP_PATH.exists():
         print("[SERVER] Circuito o specifiche non trovate. Avvio compilazione FHE...")
         try:
-            compile_fhe_circuit()
+            # Spostiamo la compilazione in nuovo processo così concrete non andrà in errori di threading e il server non si bloccherà
+            loop = asyncio.get_running_loop()
+            with ProcessPoolExecutor() as pool:
+                await loop.run_in_executor(pool, compile_fhe_circuit)
         except Exception as e:
             raise RuntimeError(f"Errore durante la compilazione del circuito FHE: {e}")
 
-        if not SERVER_ZIP_PATH.exists() or not CLIENT_SPECS_PATH.exists():
+        if not SERVER_ZIP_PATH.exists():
             raise RuntimeError(
                 "Compilazione completata, ma i file degli artefatti risultano mancanti."
             )
@@ -88,7 +90,7 @@ def get_client_specs():
         verify_and_build_resources()
         load_resources_into_memory()
 
-        specs_data = base64.b64encode(FHE_SERVER.client.specs.serialize()).decode(
+        specs_data = base64.b64encode(FHE_SERVER.client_specs.serialize()).decode(
             "utf-8"
         )
 
@@ -153,7 +155,7 @@ async def process_query(request: Request, client_id: str = Header(...)):
     try:
         raw_query_bytes = await request.body()
 
-        encrypted_query = FHE_SERVER.client_specs.deserialize(raw_query_bytes)
+        encrypted_query = fhe.Value.deserialize(raw_query_bytes)
 
         evaluation_keys = EVALUATION_KEYS_STORE[client_id]
         encrypted_result = FHE_SERVER.run(
@@ -238,7 +240,7 @@ def api_populate_csv(request: CSVPopulateRequest):
         raise HTTPException(status_code=500, detail=str(e))
 
 
-@app.post("/api/v1/admin/reset-db")
+@app.post("/api/admin/reset-db")
 def api_reset_db():
     try:
         print("[ADMIN] Inizio azzeramento del database...")
@@ -259,8 +261,8 @@ def api_reset_db():
         )
 
 
-@app.post("/api/v1/admin/recompile-circuit")
-def api_recompile_circuit():  # Ricompila il circuito ed ELIMINA I CLIENT REGISTRATI (ID: evaluation_key)
+@app.post("/api/admin/recompile-circuit")
+async def api_recompile_circuit():  # Ricompila il circuito ed ELIMINA I CLIENT REGISTRATI (ID: evaluation_key)
     global FHE_SERVER, EVALUATION_KEYS_STORE
 
     try:
@@ -271,10 +273,11 @@ def api_recompile_circuit():  # Ricompila il circuito ed ELIMINA I CLIENT REGIST
 
         if SERVER_ZIP_PATH.exists():
             SERVER_ZIP_PATH.unlink()
-        if CLIENT_SPECS_PATH.exists():
-            CLIENT_SPECS_PATH.unlink()
 
-        compile_fhe_circuit()
+        # Spostiamo la compilazione in nuovo processo così concrete non andrà in errori di threading e il server non si bloccherà
+        loop = asyncio.get_running_loop()
+        with ProcessPoolExecutor() as pool:
+            await loop.run_in_executor(pool, compile_fhe_circuit)
 
         load_resources_into_memory()
 

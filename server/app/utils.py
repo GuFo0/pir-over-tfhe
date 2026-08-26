@@ -4,6 +4,7 @@ import random
 from pathlib import Path
 
 import numpy as np
+from concrete import fhe
 
 from server.build.build_db import generate_db
 from server.config.paths import CONFIG_PATH, DB_PATH
@@ -11,10 +12,10 @@ from server.config.paths import CONFIG_PATH, DB_PATH
 SPAM_DB = None
 
 
-def get_ith_element_of_database(
-    one_hot_vector: np.ndarray, database: np.ndarray
-) -> tuple:
-    return tuple(np.dot(one_hot_vector, database[i]) for i in range(database.shape[0]))
+def get_ith_element_of_database(one_hot_vector: np.ndarray, database: np.ndarray):
+    return fhe.array(
+        [np.dot(one_hot_vector, database[i]) for i in range(database.shape[0])]
+    )
 
 
 def get_db() -> np.ndarray:

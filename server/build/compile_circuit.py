@@ -1,11 +1,10 @@
 import json
-from pathlib import Path
 
 import numpy as np
 from concrete import fhe
 
 from server.app.utils import get_ith_element_of_database
-from server.config.paths import CLIENT_SPECS_PATH, CONFIG_PATH, SERVER_ZIP_PATH
+from server.config.paths import CONFIG_PATH, SERVER_ZIP_PATH
 
 
 def compile_fhe_circuit():
@@ -38,21 +37,19 @@ def compile_fhe_circuit():
         {"one_hot_vector": "encrypted", "database": "clear"},
     )
 
-    print("Compilazione in corso...")
+    print("[BUILD] Compilazione in corso...")
     circuit = compiler.compile(
         inputset,
-        show_mlir=False,
-        show_graph=False,
-        use_gpu=False,
-        show_progress=False,
-        dataflow_parallelize=True,
+        show_mlir=config["show_mlir"],
+        show_graph=config["show_graph"],
+        use_gpu=config["use_gpu"],
+        show_progress=config["show_progress"],
+        dataflow_parallelize=config["dataflow_parallelize"],
     )
     SERVER_ZIP_PATH.parent.mkdir(parents=True, exist_ok=True)
 
     circuit.server.save(SERVER_ZIP_PATH)
 
     print(
-        f"[BUILD] Compilazione completata! Artefatto salvati in:\n- {SERVER_ZIP_PATH}"
+        f"[BUILD] Compilazione completata! Artefatto salvato in:\n- {SERVER_ZIP_PATH}"
     )
-
-    return circuit

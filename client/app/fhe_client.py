@@ -1,3 +1,4 @@
+import base64
 import json
 import os
 from pathlib import Path
@@ -33,8 +34,8 @@ class PIRClient:
             )
 
         data = response.json()
-        self.input_bits = data["input_bits"]
-        self.output_bits = data["output_bits"]
+        self.input_bits = int(data["input_bits"])
+        self.output_bits = int(data["output_bits"])
         specs_data = base64.b64decode(data["specs"])
 
         print(
@@ -98,7 +99,7 @@ class PIRClient:
 
         # 3. Cifratura dell'argomento
         print(f"[CLIENT] Cifratura del vettore one-hot (indirizzo locale: {idx_0})...")
-        encrypted_args = self.client.encrypt(one_hot)
+        encrypted_args, _ = self.client.encrypt(one_hot, None)
         serialized_query = encrypted_args.serialize()
 
         # 4. Invio query cifrata al server
@@ -109,7 +110,7 @@ class PIRClient:
         }
 
         query_response = requests.post(
-            f"{self.server_url}/api/v1/query", data=serialized_query, headers=headers
+            f"{self.server_url}/api/query", data=serialized_query, headers=headers
         )
 
         if query_response.status_code != 200:
@@ -120,10 +121,10 @@ class PIRClient:
         # 5. Ricezione e deserializzazione dei risultati pubblici
         print("[CLIENT] Risposta ricevuta dal server. Decifratura in corso...")
         serialized_result = query_response.content
-        public_result = self.client.specs.deserialize_public_results(serialized_result)
+        encrypted_result = fhe.Value.deserialize(serialized_result)
 
         # 6. Decifratura del vettore
-        decrypted_vector = self.client.decrypt(public_result)
+        decrypted_vector = self.client.decrypt(encrypted_result)
 
         # 7. Ricostruzione logica del bit di spam usando idx_1
         j = idx_1 // self.output_bits

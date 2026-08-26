@@ -1,0 +1,383 @@
+<!doctype html>
+<html lang="it">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>Admin Dashboard | PIR Spam Filter</title>
+        <!-- Bootstrap 5 CSS -->
+        <link
+            href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css"
+            rel="stylesheet"
+        />
+        <style>
+            body {
+                background-color: #f8f9fa;
+            }
+            .card {
+                box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+                margin-bottom: 20px;
+            }
+            .stat-value {
+                font-size: 2rem;
+                font-weight: bold;
+                color: #0d6efd;
+            }
+        </style>
+    </head>
+    <body>
+        <nav class="navbar navbar-dark bg-dark">
+            <div class="container">
+                <span class="navbar-brand mb-0 h1"
+                    >TFHE PIR Spam Filter - Pannello Admin</span
+                >
+                <button
+                    class="btn btn-outline-light btn-sm"
+                    onclick="loadStats()"
+                >
+                    Aggiorna Dati
+                </button>
+            </div>
+        </nav>
+
+        <div class="container mt-4">
+            <!-- Notifiche (Toast/Alert) -->
+            <div id="alertBox" class="alert d-none" role="alert"></div>
+
+            <div class="row">
+                <!-- Statistiche Database -->
+                <div class="col-md-12 mb-4">
+                    <div class="card text-center py-3">
+                        <div class="row">
+                            <div class="col-md-4">
+                                <h5>Capacità Totale Database</h5>
+                                <div class="stat-value" id="statCapacity">
+                                    ...
+                                </div>
+                                <small class="text-muted"
+                                    >numeri supportati</small
+                                >
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Numeri Spam Registrati</h5>
+                                <div
+                                    class="stat-value text-danger"
+                                    id="statSpam"
+                                >
+                                    ...
+                                </div>
+                                <small class="text-muted"
+                                    >elementi nel DB</small
+                                >
+                            </div>
+                            <div class="col-md-4">
+                                <h5>Dimensione Matrice (RAM)</h5>
+                                <div
+                                    class="stat-value text-success"
+                                    id="statShape"
+                                >
+                                    ...
+                                </div>
+                                <small class="text-muted"
+                                    >Righe x Colonne</small
+                                >
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Modifica Singola -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-primary text-white">
+                            Aggiungi / Rimuovi Numero
+                        </div>
+                        <div class="card-body">
+                            <label class="form-label">Indice Telefono</label>
+                            <input
+                                type="number"
+                                id="phoneIndex"
+                                class="form-control mb-3"
+                                placeholder="Es. 123456"
+                            />
+                            <label class="form-label">Azione</label>
+                            <select id="isSpam" class="form-select mb-3">
+                                <option value="true">
+                                    Contrassegna come SPAM
+                                </option>
+                                <option value="false">
+                                    Rimuovi dallo SPAM
+                                </option>
+                            </select>
+                            <button
+                                class="btn btn-primary w-100"
+                                onclick="updateSingle()"
+                            >
+                                Applica Modifica
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Popolamento Casuale -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-warning text-dark">
+                            Generazione Casuale
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">
+                                Popola il database con indici casuali (utile per
+                                benchmarking).
+                            </p>
+                            <label class="form-label">Quantità di numeri</label>
+                            <input
+                                type="number"
+                                id="randomCount"
+                                class="form-control mb-3"
+                                value="1000"
+                            />
+                            <button
+                                class="btn btn-warning w-100"
+                                onclick="populateRandom()"
+                            >
+                                Genera Random
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Caricamento CSV -->
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header bg-success text-white">
+                            Carica da file CSV
+                        </div>
+                        <div class="card-body">
+                            <p class="text-muted small">
+                                Inserisci il percorso assoluto o relativo del
+                                file CSV residente sul server.
+                            </p>
+                            <label class="form-label">Percorso File</label>
+                            <input
+                                type="text"
+                                id="csvPath"
+                                class="form-control mb-3"
+                                placeholder="es. server/data/lista.csv"
+                            />
+                            <button
+                                class="btn btn-success w-100"
+                                onclick="populateCSV()"
+                            >
+                                Avvia Importazione
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                <!-- Sistema e Manutenzione -->
+                <div class="col-md-4">
+                    <div class="card border-danger">
+                        <div class="card-header bg-danger text-white">
+                            Area di Pericolo (Manutenzione)
+                        </div>
+                        <div class="card-body">
+                            <!-- Tasto Reset DB -->
+                            <div class="mb-4">
+                                <h6 class="text-danger">Svuota Database</h6>
+                                <p class="text-muted small mb-2">
+                                    Elimina tutti i numeri spam e riporta il DB
+                                    a zero. I client connessi NON verranno
+                                    disconnessi.
+                                </p>
+                                <button
+                                    id="resetDbBtn"
+                                    class="btn btn-outline-warning w-100"
+                                    onclick="resetDatabase()"
+                                >
+                                    Azzera Database
+                                </button>
+                            </div>
+
+                            <hr />
+
+                            <!-- Tasto Ricompila Circuito -->
+                            <div>
+                                <h6 class="text-danger">Ricompila Circuito</h6>
+                                <p class="text-muted small mb-2">
+                                    Genera un nuovo circuito crittografico.
+                                    <b>Eliminerà tutte le chiavi utente</b>
+                                    forzando i client a ricollegarsi.
+                                </p>
+                                <button
+                                    id="recompileBtn"
+                                    class="btn btn-outline-danger w-100"
+                                    onclick="recompileCircuit()"
+                                >
+                                    Ricompila Circuito
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- JavaScript per logica e chiamate API -->
+        <script>
+            const alertBox = document.getElementById("alertBox");
+
+            function showAlert(msg, isError = false) {
+                alertBox.className = `alert ${isError ? "alert-danger" : "alert-success"}`;
+                alertBox.textContent = msg;
+                setTimeout(() => {
+                    alertBox.className = "alert d-none";
+                }, 5000);
+            }
+
+            async function fetchAPI(url, options = {}) {
+                try {
+                    const res = await fetch(url, options);
+                    const data = await res.json();
+                    if (!res.ok)
+                        throw new Error(data.detail || "Errore sconosciuto");
+                    return data;
+                } catch (err) {
+                    showAlert(err.message, true);
+                    throw err;
+                }
+            }
+
+            async function loadStats() {
+                const data = await fetchAPI("/api/admin/stats");
+                document.getElementById("statCapacity").textContent =
+                    data.total_capacity.toLocaleString();
+                document.getElementById("statSpam").textContent =
+                    data.total_spam.toLocaleString();
+                document.getElementById("statShape").textContent =
+                    `[${data.matrix_shape.join(" x ")}]`;
+            }
+
+            async function updateSingle() {
+                const index = parseInt(
+                    document.getElementById("phoneIndex").value,
+                );
+                const isSpam =
+                    document.getElementById("isSpam").value === "true";
+
+                if (isNaN(index))
+                    return showAlert("Inserisci un indice valido.", true);
+
+                // Costruisce la lista di tuple attesa dall'endpoint
+                const payload = [[isSpam, index]];
+
+                await fetchAPI("/api/admin/update-spam", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify(payload),
+                });
+
+                showAlert(`Numero ${index} aggiornato con successo!`);
+                loadStats();
+            }
+
+            async function populateRandom() {
+                const count = parseInt(
+                    document.getElementById("randomCount").value,
+                );
+                await fetchAPI("/api/admin/populate-random", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ num_entries: count }),
+                });
+                showAlert(`${count} numeri spam inseriti casualmente!`);
+                loadStats();
+            }
+
+            async function populateCSV() {
+                const path = document.getElementById("csvPath").value;
+                if (!path)
+                    return showAlert("Inserisci un percorso valido.", true);
+
+                await fetchAPI("/api/admin/populate-csv", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ filepath: path }),
+                });
+                showAlert("Database popolato con successo dal CSV!");
+                loadStats();
+            }
+
+            async function resetDatabase() {
+                if (
+                    !confirm(
+                        "Sei sicuro di voler svuotare completamente il database? Tutti i numeri spam registrati andranno persi.",
+                    )
+                ) {
+                    return;
+                }
+
+                const btn = document.getElementById("resetDbBtn");
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Azzeramento...';
+
+                try {
+                    await fetchAPI("/api/admin/reset-db", {
+                        method: "POST",
+                    });
+                    showAlert("Database azzerato con successo!");
+                    loadStats(); // Ricarica le statistiche (mostrerà 0 spam)
+                } catch (err) {
+                    showAlert(
+                        "Errore durante l'azzeramento: " + err.message,
+                        true,
+                    );
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            async function recompileCircuit() {
+                if (
+                    !confirm(
+                        "Attenzione! Questo disconnetterà tutti i client attuali ed avvierà la compilazione FHE (potrebbe impiegare alcuni minuti). Procedere?",
+                    )
+                ) {
+                    return;
+                }
+
+                const btn = document.getElementById("recompileBtn");
+                const originalText = btn.innerHTML;
+                btn.disabled = true;
+                btn.innerHTML =
+                    '<span class="spinner-border spinner-border-sm" role="status" aria-hidden="true"></span> Compilazione in corso...';
+
+                showAlert(
+                    "Avvio compilazione. Attendi la fine dell'operazione...",
+                    false,
+                );
+
+                try {
+                    await fetchAPI("/api/admin/recompile-circuit", {
+                        method: "POST",
+                    });
+                    showAlert(
+                        "Circuito crittografico ricompilato. Tutti gli utenti sono stati disconnessi.",
+                    );
+                } catch (err) {
+                    showAlert(
+                        "Errore durante la ricompilazione: " + err.message,
+                        true,
+                    );
+                } finally {
+                    btn.innerHTML = originalText;
+                    btn.disabled = false;
+                }
+            }
+
+            // Carica le statisiche all'avvio della pagina
+            window.onload = loadStats;
+        </script>
+    </body>
+</html>
