@@ -1,0 +1,2 @@
+one_hot_vector :: encrypted
+database :: clear

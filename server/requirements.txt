@@ -1,0 +1,6 @@
+concrete-python
+numpy
+fastapi
+uvicorn
+setuptools==81.0.0
+pydantic

@@ -1,13 +1,13 @@
+import csv
 import json
+import random
 from pathlib import Path
 
 import numpy as np
 
 from server.build.build_db import generate_db
+from server.config.paths import CONFIG_PATH, DB_PATH
 
-BASE_DIR = Path(__file__).resolve().parent.parent
-CONFIG_PATH = BASE_DIR / "config" / "settings.json"
-DB_PATH = BASE_DIR / "data" / "spam_db.npy"
 SPAM_DB = None
 
 
@@ -59,3 +59,54 @@ def update_db_in_memory(updates: list[tuple[bool, int]]):
     print(
         f"[UTILS] Database modificato direttamente in RAM e salvato su disco. Record aggiornati: {len(updates)}"
     )
+
+
+def populate_db_randomly(num_spam_entries: int):
+    with open(CONFIG_PATH, "r") as file:
+        config = json.load(file)
+
+    total_bits = config["TOTAL_BITS"]
+    max_index = (2**total_bits) - 1
+
+    if num_spam_entries > max_index:
+        raise ValueError(
+            "Il numero di spam richiesto supera la capacità totale del database."
+        )
+
+    print(f"[UTILS] Generazione di {num_spam_entries} numeri spam casuali...")
+    random_indices = random.sample(range(max_index + 1), num_spam_entries)
+    updates = [(True, idx) for idx in random_indices]
+    update_db_in_memory(updates)
+
+
+def populate_db_from_csv(filepath: str):
+    file_path_obj = Path(filepath)
+    if not file_path_obj.exists():
+        raise FileNotFoundError(f"Il file {filepath} non esiste.")
+
+    updates = []
+    print(f"[UTILS] Lettura del file CSV: {filepath}...")
+
+    with open(file_path_obj, mode="r", encoding="utf-8") as f:
+        reader = csv.reader(f)
+        for row in reader:
+            if not row:
+                continue  # Ignora le righe vuote
+
+            raw_value = row[0].strip()
+
+            # Ignora valori non numerici
+            if raw_value.isdigit():
+                phone_index = int(raw_value)
+                updates.append((True, phone_index))
+
+    if not updates:
+        print("[UTILS] Nessun numero valido trovato nel CSV.")
+        return
+    update_db_in_memory(updates)
+
+
+def clear_db_memory():
+    global SPAM_DB
+    SPAM_DB = None
+    print("[UTILS] Memoria del database svuotata.")

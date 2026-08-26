@@ -1,0 +1,14 @@
+Traceback (most recent call last):
+  File "/home/gufo/Desktop/uni/Tesi/pir-over-tfhe/.venv/lib/python3.10/site-packages/concrete/fhe/compilation/module_compiler.py", line 406, in compile
+    function.evaluate("Compiling", inputset, configuration, function_artifacts)
+  File "/home/gufo/Desktop/uni/Tesi/pir-over-tfhe/.venv/lib/python3.10/site-packages/concrete/fhe/compilation/module_compiler.py", line 234, in evaluate
+    self.trace(first_sample, artifacts)
+  File "/home/gufo/Desktop/uni/Tesi/pir-over-tfhe/.venv/lib/python3.10/site-packages/concrete/fhe/compilation/module_compiler.py", line 147, in trace
+    self.graph = Tracer.trace(self.function, parameters, location=self.location)
+  File "/home/gufo/Desktop/uni/Tesi/pir-over-tfhe/.venv/lib/python3.10/site-packages/concrete/fhe/tracing/tracer.py", line 75, in trace
+    node = Node.input(param, parameters[param])
+  File "/home/gufo/Desktop/uni/Tesi/pir-over-tfhe/.venv/lib/python3.10/site-packages/concrete/fhe/representation/node.py", line 149, in input
+    return Node([value], value, Operation.Input, InputEvaluator(), {"name": name})
+  File "/home/gufo/Desktop/uni/Tesi/pir-over-tfhe/.venv/lib/python3.10/site-packages/concrete/fhe/representation/node.py", line 190, in __init__
+    self.tag = ".".join(tag_context.stack)
+AttributeError: '_thread._local' object has no attribute 'stack'
