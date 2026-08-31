@@ -40,9 +40,7 @@ def main(port):
 
             print("\n>>>  RISULTATO  <<<")
             if is_spam:
-                print(
-                    f"L'indice {phone_index} è associato a un numero di SPAM! [RILEVATO]"
-                )
+                print(f"L'indice {phone_index} è associato a un numero SPAM [RILEVATO]")
             else:
                 print(f"L'indice {phone_index} è sicuro. [NON RILEVATO]")
             print("---------------------------------------------\n")

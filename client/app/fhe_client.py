@@ -15,7 +15,6 @@ class PIRClient:
         self.input_bits = None
         self.output_bits = None
 
-        # Gestione dei percorsi locali del client
         self.base_dir = Path(__file__).resolve().parent.parent
         self.artifacts_dir = self.base_dir / "artifacts"
         self.artifacts_dir.mkdir(parents=True, exist_ok=True)
@@ -41,23 +40,14 @@ class PIRClient:
         print(
             f"[CLIENT] Configurazione di rete: INPUT_BITS={self.input_bits}, OUTPUT_BITS={self.output_bits}"
         )
-
-        # 2. Scrittura locale temporanea delle specifiche del client
-        # with open(self.specs_path, "w") as file:
-        #     json.dump(specs_data, file)
-
-        # 3. Istanza del client FHE basato sulle specifiche
-        # client_specs = fhe.ClientSpecs.load(self.specs_path)
         client_specs = fhe.ClientSpecs.deserialize(specs_data)
         self.client = fhe.Client(client_specs)
 
-        # 4. Generazione locale della chiave segreta e di valutazione
         print(
             "[CLIENT] Generazione delle chiavi FHE (l'operazione richiede qualche secondo)..."
         )
         self.client.keygen()
 
-        # 5. Serializzazione e registrazione della chiave di valutazione sul server
         print("[CLIENT] Invio della chiave di valutazione al server...")
         serialized_eval_keys = self.client.evaluation_keys.serialize()
 
@@ -89,20 +79,16 @@ class PIRClient:
 
         database_length = 2**self.input_bits
 
-        # 1. Scomposizione dell'indice in idx_0 (cifrato) e idx_1 (in chiaro locale)
         idx_0 = phone_index & (database_length - 1)
         idx_1 = phone_index >> self.input_bits
 
-        # 2. Generazione del vettore one-hot
         one_hot = np.zeros(database_length, dtype=np.int8)
         one_hot[idx_0] = 1
 
-        # 3. Cifratura dell'argomento
         print(f"[CLIENT] Cifratura del vettore one-hot (indirizzo locale: {idx_0})...")
         encrypted_args, _ = self.client.encrypt(one_hot, None)
         serialized_query = encrypted_args.serialize()
 
-        # 4. Invio query cifrata al server
         print("[CLIENT] Invio della query cifrata...")
         headers = {
             "Client-ID": self.client_id,
@@ -118,15 +104,12 @@ class PIRClient:
                 f"L'esecuzione della query ha fallito: {query_response.text}"
             )
 
-        # 5. Ricezione e deserializzazione dei risultati pubblici
         print("[CLIENT] Risposta ricevuta dal server. Decifratura in corso...")
         serialized_result = query_response.content
         encrypted_result = fhe.Value.deserialize(serialized_result)
 
-        # 6. Decifratura del vettore
         decrypted_vector = self.client.decrypt(encrypted_result)
 
-        # 7. Ricostruzione logica del bit di spam usando idx_1
         j = idx_1 // self.output_bits
         k = idx_1 % self.output_bits
 
