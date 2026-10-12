@@ -1,0 +1,372 @@
+[
+  {
+    "id": "baseline_default",
+    "desc": "Default (1M contatti, matrice 8x16384, parallelo)",
+    "params": {
+      "total_bits": 20,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 1048576,
+      "matrix_rows": 8,
+      "matrix_cols": 16384,
+      "db_size_mb": 1.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.61,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 156160.24,
+      "response_download_bytes": 78328
+    },
+    "timings_ms": {
+      "compilation_s": 0.54,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1666.69,
+      "encrypt_std": 52.57,
+      "server_fhe_mean": 844.78,
+      "server_fhe_std": 153.47,
+      "decrypt_mean": 3.15,
+      "decrypt_std": 1.88,
+      "numpy_clear_mean": 0.7095,
+      "direct_clear_mean": 0.00206
+    },
+    "metrics": {
+      "throughput_mb_s": 1.18,
+      "slowdown_vs_numpy": 1190.7,
+      "slowdown_vs_direct": 410686.2
+    }
+  },
+  {
+    "id": "scale_btotal_18",
+    "desc": "Scalabilit\u00e0 B_total=18 (262k contatti, 2 righe)",
+    "params": {
+      "total_bits": 18,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 262144,
+      "matrix_rows": 2,
+      "matrix_cols": 16384,
+      "db_size_mb": 0.25,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.61,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 151168.24,
+      "response_download_bytes": 19144
+    },
+    "timings_ms": {
+      "compilation_s": 1.47,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1537.55,
+      "encrypt_std": 36.85,
+      "server_fhe_mean": 621.08,
+      "server_fhe_std": 38.58,
+      "decrypt_mean": 1.79,
+      "decrypt_std": 0.38,
+      "numpy_clear_mean": 0.105,
+      "direct_clear_mean": 0.00166
+    },
+    "metrics": {
+      "throughput_mb_s": 0.4,
+      "slowdown_vs_numpy": 5913.6,
+      "slowdown_vs_direct": 375186.4
+    }
+  },
+  {
+    "id": "scale_btotal_19",
+    "desc": "Scalabilit\u00e0 B_total=19 (524k contatti, 4 righe)",
+    "params": {
+      "total_bits": 19,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 524288,
+      "matrix_rows": 4,
+      "matrix_cols": 16384,
+      "db_size_mb": 0.5,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.62,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 153728.24,
+      "response_download_bytes": 38680
+    },
+    "timings_ms": {
+      "compilation_s": 0.66,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1585.87,
+      "encrypt_std": 58.23,
+      "server_fhe_mean": 648.66,
+      "server_fhe_std": 119.77,
+      "decrypt_mean": 1.98,
+      "decrypt_std": 1.02,
+      "numpy_clear_mean": 1.0316,
+      "direct_clear_mean": 0.00259
+    },
+    "metrics": {
+      "throughput_mb_s": 0.77,
+      "slowdown_vs_numpy": 628.8,
+      "slowdown_vs_direct": 250255.0
+    }
+  },
+  {
+    "id": "scale_btotal_21",
+    "desc": "Scalabilit\u00e0 B_total=21 (2.1M contatti, 16 righe)",
+    "params": {
+      "total_bits": 21,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 2097152,
+      "matrix_rows": 16,
+      "matrix_cols": 16384,
+      "db_size_mb": 2.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.62,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 158720.24,
+      "response_download_bytes": 158968
+    },
+    "timings_ms": {
+      "compilation_s": 1.6,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1661.38,
+      "encrypt_std": 32.71,
+      "server_fhe_mean": 844.33,
+      "server_fhe_std": 150.35,
+      "decrypt_mean": 2.54,
+      "decrypt_std": 0.19,
+      "numpy_clear_mean": 0.75,
+      "direct_clear_mean": 0.00659
+    },
+    "metrics": {
+      "throughput_mb_s": 2.37,
+      "slowdown_vs_numpy": 1125.8,
+      "slowdown_vs_direct": 128169.3
+    }
+  },
+  {
+    "id": "scale_btotal_22",
+    "desc": "Scalabilit\u00e0 B_total=22 (4.2M contatti, 32 righe)",
+    "params": {
+      "total_bits": 22,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 4194304,
+      "matrix_rows": 32,
+      "matrix_cols": 16384,
+      "db_size_mb": 4.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.62,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 161152.24,
+      "response_download_bytes": 322552
+    },
+    "timings_ms": {
+      "compilation_s": 2.13,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1660.96,
+      "encrypt_std": 52.54,
+      "server_fhe_mean": 1220.44,
+      "server_fhe_std": 5.99,
+      "decrypt_mean": 2.63,
+      "decrypt_std": 0.11,
+      "numpy_clear_mean": 1.3058,
+      "direct_clear_mean": 0.00219
+    },
+    "metrics": {
+      "throughput_mb_s": 3.28,
+      "slowdown_vs_numpy": 934.6,
+      "slowdown_vs_direct": 557279.0
+    }
+  },
+  {
+    "id": "scale_btotal_23",
+    "desc": "Scalabilit\u00e0 B_total=23 (8.4M contatti, 64 righe)",
+    "params": {
+      "total_bits": 23,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 8388608,
+      "matrix_rows": 64,
+      "matrix_cols": 16384,
+      "db_size_mb": 8.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.62,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 163584.24,
+      "response_download_bytes": 654584
+    },
+    "timings_ms": {
+      "compilation_s": 5.21,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1651.96,
+      "encrypt_std": 40.76,
+      "server_fhe_mean": 1962.12,
+      "server_fhe_std": 42.96,
+      "decrypt_mean": 3.73,
+      "decrypt_std": 0.69,
+      "numpy_clear_mean": 2.6391,
+      "direct_clear_mean": 0.00233
+    },
+    "metrics": {
+      "throughput_mb_s": 4.08,
+      "slowdown_vs_numpy": 743.5,
+      "slowdown_vs_direct": 840884.7
+    }
+  },
+  {
+    "id": "scale_btotal_24",
+    "desc": "Scalabilit\u00e0 B_total=24 (16.8M contatti, 128 righe)",
+    "params": {
+      "total_bits": 24,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 16777216,
+      "matrix_rows": 128,
+      "matrix_cols": 16384,
+      "db_size_mb": 16.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.63,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 166144.24,
+      "response_download_bytes": 1329400
+    },
+    "timings_ms": {
+      "compilation_s": 32.43,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1681.62,
+      "encrypt_std": 66.12,
+      "server_fhe_mean": 3413.57,
+      "server_fhe_std": 51.28,
+      "decrypt_mean": 5.51,
+      "decrypt_std": 1.65,
+      "numpy_clear_mean": 4.2098,
+      "direct_clear_mean": 0.00209
+    },
+    "metrics": {
+      "throughput_mb_s": 4.69,
+      "slowdown_vs_numpy": 810.9,
+      "slowdown_vs_direct": 1631570.3
+    }
+  },
+  {
+    "id": "geom_bin_12",
+    "desc": "Geometria B_in=12 (Query corta 4096, 32 righe)",
+    "params": {
+      "total_bits": 20,
+      "input_bits": 12,
+      "output_bits": 8,
+      "total_records": 1048576,
+      "matrix_rows": 32,
+      "matrix_cols": 4096,
+      "db_size_mb": 1.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.61,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 39040.24,
+      "response_download_bytes": 312568
+    },
+    "timings_ms": {
+      "compilation_s": 0.89,
+      "keygen_s": 0.0,
+      "encrypt_mean": 442.0,
+      "encrypt_std": 36.54,
+      "server_fhe_mean": 289.65,
+      "server_fhe_std": 9.93,
+      "decrypt_mean": 2.66,
+      "decrypt_std": 0.05,
+      "numpy_clear_mean": 0.4719,
+      "direct_clear_mean": 0.00209
+    },
+    "metrics": {
+      "throughput_mb_s": 3.45,
+      "slowdown_vs_numpy": 613.8,
+      "slowdown_vs_direct": 138655.5
+    }
+  },
+  {
+    "id": "geom_bin_16",
+    "desc": "Geometria B_in=16 (Query lunga 65536, 2 righe)",
+    "params": {
+      "total_bits": 20,
+      "input_bits": 16,
+      "output_bits": 8,
+      "total_records": 1048576,
+      "matrix_rows": 2,
+      "matrix_cols": 65536,
+      "db_size_mb": 1.0,
+      "parallelize": true
+    },
+    "sizes": {
+      "specs_kb": 1.61,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 624640.25,
+      "response_download_bytes": 19768
+    },
+    "timings_ms": {
+      "compilation_s": 1.87,
+      "keygen_s": 0.0,
+      "encrypt_mean": 6377.04,
+      "encrypt_std": 255.58,
+      "server_fhe_mean": 2693.31,
+      "server_fhe_std": 744.75,
+      "decrypt_mean": 4.53,
+      "decrypt_std": 2.7,
+      "numpy_clear_mean": 1.1426,
+      "direct_clear_mean": 0.00234
+    },
+    "metrics": {
+      "throughput_mb_s": 0.37,
+      "slowdown_vs_numpy": 2357.1,
+      "slowdown_vs_direct": 1152664.1
+    }
+  },
+  {
+    "id": "parallel_false",
+    "desc": "Multithreading disattivato (Default sequenziale su 1 core)",
+    "params": {
+      "total_bits": 20,
+      "input_bits": 14,
+      "output_bits": 8,
+      "total_records": 1048576,
+      "matrix_rows": 8,
+      "matrix_cols": 16384,
+      "db_size_mb": 1.0,
+      "parallelize": false
+    },
+    "sizes": {
+      "specs_kb": 1.61,
+      "eval_keys_mb": 0.0,
+      "query_upload_kb": 156160.24,
+      "response_download_bytes": 78328
+    },
+    "timings_ms": {
+      "compilation_s": 2.01,
+      "keygen_s": 0.0,
+      "encrypt_mean": 1503.88,
+      "encrypt_std": 30.21,
+      "server_fhe_mean": 445.7,
+      "server_fhe_std": 14.64,
+      "decrypt_mean": 1.54,
+      "decrypt_std": 0.53,
+      "numpy_clear_mean": 0.2154,
+      "direct_clear_mean": 0.00141
+    },
+    "metrics": {
+      "throughput_mb_s": 2.24,
+      "slowdown_vs_numpy": 2069.4,
+      "slowdown_vs_direct": 316775.2
+    }
+  }
+]
