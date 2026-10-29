@@ -1,13 +1,10 @@
 #!/usr/bin/env python3
-"""Suite di benchmark automatizzata per PIR over TFHE (Concrete Python).
-
-Esegue in sequenza gli esperimenti per i Capitoli 7 e 8:
+"""
 - Test 1: Configurazione di Default (20, 14, 8) e scomposizione delle fasi
 - Test 2: Trade-off della Geometria (B_in = 12 vs 14 vs 16)
 - Test 3: Scalabilità del Database (B_total = 18 vs 19 vs 20)
 - Test 4: Efficienza del Multithreading (dataflow_parallelize True vs False)
 - Baseline in chiaro: Scansione lineare NumPy O(N) e Accesso Diretto O(1)
-Salva i risultati aggregati in benchmark_results.json.
 """
 
 import json
